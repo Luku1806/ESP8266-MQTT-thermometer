@@ -8,8 +8,7 @@
 
 #define DHT_PIN 2
 #define DHT_TYPE DHT11
-#define DHT_DEVIATION                                                          \
-  4 // The deviation of the used DHT to correct the temp reading
+#define DHT_DEVIATION 4 // The deviation of the used DHT to correct the temp reading
 
 #define WIFI_SSID "your_ssid"
 #define WIFI_PSK "ypur_passwd"
@@ -31,40 +30,40 @@ DHT dht(DHT_PIN, DHT_TYPE);
  * Blocks until both connections are established.
  */
 void connect() {
-  // If WIFI is not connected, connect to it
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.print("Connecting to WIFI ");
-    Serial.print(WIFI_SSID);
-    Serial.print("...");
+    // If WIFI is not connected, connect to it
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial.print("Connecting to WIFI ");
+        Serial.print(WIFI_SSID);
+        Serial.print("...");
 
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(1000);
-      Serial.print(".");
+        while (WiFi.status() != WL_CONNECTED) {
+            delay(1000);
+            Serial.print(".");
+        }
+
+        Serial.println();
+        Serial.println("WiFi connected");
+        Serial.print("IP address:");
+        Serial.print(WiFi.localIP());
+        Serial.println("\n");
     }
 
-    Serial.println();
-    Serial.println("WiFi connected");
-    Serial.print("IP address:");
-    Serial.print(WiFi.localIP());
-    Serial.println("\n");
-  }
-
-  // If mqtt is not connected, connect to it
-  while (!mqttClient.connected()) {
-    Serial.println("Connecting to MQTT broker...");
-    if (!mqttClient.connect(MQTT_FRIENDLY_NAME, MQTT_USER, MQTT_PASSWORD)) {
-      Serial.print("failed, rc=");
-      Serial.print(mqttClient.state());
-      Serial.println(" retrying in 5 seconds");
-      delay(5000);
+    // If mqtt is not connected, connect to it
+    while (!mqttClient.connected()) {
+        Serial.println("Connecting to MQTT broker...");
+        if (!mqttClient.connect(MQTT_FRIENDLY_NAME, MQTT_USER, MQTT_PASSWORD)) {
+            Serial.print("failed, rc=");
+            Serial.print(mqttClient.state());
+            Serial.println(" retrying in 5 seconds");
+            delay(5000);
+        }
     }
-  }
-  Serial.println("Connected to MQTT broker\n");
+    Serial.println("Connected to MQTT broker\n");
 
-  // Enable MDNS
-  if (!MDNS.begin(WIFI_HOSTNAME)) {
-    Serial.println("MDNS could not be set up");
-  }
+    // Enable MDNS
+    if (!MDNS.begin(WIFI_HOSTNAME)) {
+        Serial.println("MDNS could not be set up");
+    }
 }
 
 /**
@@ -74,54 +73,54 @@ void connect() {
  * @param humidity The humidty value to send (in percent)
  */
 void publishData(float temperature, float humidity) {
-  StaticJsonBuffer<200> jsonBuffer;
-  JsonObject &jObj = jsonBuffer.createObject();
+    StaticJsonBuffer<200> jsonBuffer;
+    JsonObject &jObj = jsonBuffer.createObject();
 
-  jObj["temperature"] = (String)temperature;
-  jObj["humidity"] = (String)humidity;
+    jObj["temperature"] = (String)temperature;
+    jObj["humidity"] = (String)humidity;
 
-  char data[200];
-  jObj.printTo(data, jObj.measureLength() + 1);
-  mqttClient.publish(MQTT_SENSOR_TOPIC, data, true);
-  yield();
+    char data[200];
+    jObj.printTo(data, jObj.measureLength() + 1);
+    mqttClient.publish(MQTT_SENSOR_TOPIC, data, true);
+    yield();
 }
 
 void setup() {
-  delay(10);
-  Serial.begin(115200);
-  Serial.println("Starting WIFI thermometer...\n");
+    delay(10);
+    Serial.begin(115200);
+    Serial.println("Starting WIFI thermometer...\n");
 
-  dht.begin();
+    dht.begin();
 
-  WiFi.hostname(WIFI_HOSTNAME);
-  WiFi.begin(WIFI_SSID, WIFI_PSK);
-  mqttClient.setServer(MQTT_BROKER, 1883);
+    WiFi.hostname(WIFI_HOSTNAME);
+    WiFi.begin(WIFI_SSID, WIFI_PSK);
+    mqttClient.setServer(MQTT_BROKER, 1883);
 
-  connect();
+    connect();
 }
 
 void loop() {
-  if (!mqttClient.connected()) {
-    connect();
-  }
+    if (!mqttClient.connected()) {
+        connect();
+    }
 
-  mqttClient.loop();
-  delay(10); // --> Improves WIFI stability
+    mqttClient.loop();
+    delay(10); // --> Improves WIFI stability
 
-  // Serial.print("Alive since ");
-  // Serial.print(millis());
-  // Serial.println(" milliseconds");
+    // Serial.print("Alive since ");
+    // Serial.print(millis());
+    // Serial.println(" milliseconds");
 
-  // Read sensor data !!!!!!!!!!!
-  float humidity = dht.readHumidity();
-  float temp = dht.readTemperature() - DHT_DEVIATION; // In celsius
+    // Read sensor data !!!!!!!!!!!
+    float humidity = dht.readHumidity();
+    float temp = dht.readTemperature() - DHT_DEVIATION; // In celsius
 
-  if (isnan(humidity) || isnan(temp)) {
-    Serial.println("ERROR: Failed to read from DHT sensor!");
-    return;
-  } else {
-    publishData(temp, humidity);
-  }
+    if (isnan(humidity) || isnan(temp)) {
+        Serial.println("ERROR: Failed to read from DHT sensor!");
+        return;
+    } else {
+        publishData(temp, humidity);
+    }
 
-  delay(MQTT_MESSAGE_DELAY * 1000);
+    delay(MQTT_MESSAGE_DELAY * 1000);
 }
