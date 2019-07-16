@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="de" class="">
+<html lang='de' class=''>
 
 <head>
     <meta charset='utf-8'>
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-    <title>Lukas Schreibtischlampe - WLAN konfigurieren</title>
+    <meta name='viewport' content='width=device-width,initial-scale=1,user-scalable=no' />
+    <title>ESP Thermometer konfiguration</title>
     <style>
         div,
         fieldset,
@@ -12,6 +12,10 @@
         select {
             padding: 5px;
             font-size: 1em;
+        }
+
+        h1 {
+            text-align: center
         }
 
         fieldset {
@@ -23,7 +27,7 @@
         }
 
         input {
-            width: 100%;
+            width: 100%%;
             box-sizing: border-box;
             -webkit-box-sizing: border-box;
             -moz-box-sizing: border-box;
@@ -37,12 +41,12 @@
         }
 
         select {
-            width: 100%;
+            width: 100%%;
         }
 
         textarea {
             resize: none;
-            width: 98%;
+            width: 98%%;
             height: 318px;
             padding: 5px;
             overflow: auto;
@@ -64,7 +68,7 @@
             color: #fff;
             line-height: 2.4rem;
             font-size: 1.2rem;
-            width: 100%;
+            width: 100%%;
             -webkit-transition-duration: 0.4s;
             transition-duration: 0.4s;
             cursor: pointer;
@@ -80,6 +84,14 @@
 
         .bgrn:hover {
             background-color: #5aaf6f;
+        }
+
+        .btnr {
+            background-color: #ff0000;
+        }
+
+        .btnr:hover {
+            background-color: #cc0000;
         }
 
         a {
@@ -100,29 +112,86 @@
 
 <body>
     <div style='text-align:left;display:inline-block;min-width:340px;'>
-        <fieldset>
-            <legend>
-                <b>&nbsp;WLAN-Einstellungen&nbsp;</b>
-            </legend>
-            <form method='get' action='a'>
+        <h1>Einstellungen</h1>
+        <form method='get' action='config'>
+            <fieldset>
+                <legend>
+                    <b>&nbsp;WLAN&nbsp;</b>
+                </legend>
+
                 <p>
                     <b>WLAN SSID</b><br />
-                    <input id='ssid' name='ssid' placeholder='SSID'>
+                    <input id='wifi-ssid' name='wifi-ssid' placeholder='SSID' maxlength='31' value='%s' required>
                 </p>
 
                 <p>
                     <b>WLAN Passwort</b><br />
-                    <input id='passwd' name='passwd' type='password' placeholder='Passwort'>
+                    <input id='wifi-passwd' name='wifi-passwd' type='password' placeholder='Passwort' maxlength='31'
+                        value='%s' required>
                 </p>
 
                 <p>
                     <b>Hostname</b><br />
-                    <input id='host' name='host' placeholder='Hostname' value='esp-wifi-thermometer'>
+                    <input id='host' name='host' placeholder='Hostname' value='esp-wifi-thermometer' maxlength='31'
+                        value='%s' required>
                 </p><br />
+            </fieldset><br />
 
-                <button name='save' type='submit' class='button bgrn'>Speichern</button>
-            </form>
-        </fieldset>
+            <fieldset>
+                <legend>
+                    <b>&nbsp;MQTT&nbsp;</b>
+                </legend>
+
+                <p>
+                    <b>Broker IP-Adresse</b><br />
+                    <input id='broker-ip' name='broker-ip' placeholder='MQTT Broker IP-Adresse'
+                        pattern='(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)_*(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)_*){3}'
+                        maxlength='15' value='%s' required>
+                </p>
+
+                <p>
+                    <b>MQTT Port</b><br />
+                    <input name='mqtt-port' type='number' min='0' max=' 65535' placeholder='Port' value='%u' required>
+                </p>
+
+                <p>
+                    <b>MQTT Nutzername</b><br />
+                    <input id='mqtt-user' name='mqtt-user' placeholder='MQTT Nutzername' maxlength='31' value='%s'
+                        required>
+                </p>
+
+                <p>
+                    <b>MQTT Passwort</b><br />
+                    <input id='mqtt-passwd' name='mqtt-passwd' type='password' placeholder='Passwort' maxlength='31'
+                        value='%s' required>
+                </p>
+
+                <p>
+                    <b>MQTT Topic</b><br />
+                    <input id='mqtt-topic' name='mqtt-topic' placeholder='MQTT Topic' maxlength='254' value='%s'
+                        required>
+                </p><br />
+            </fieldset><br />
+
+            <fieldset>
+                <legend>
+                    <b>&nbsp;Allgemein&nbsp;</b>
+                </legend>
+
+                <p>
+                    <b>Temperaturanpassung in C&deg (-10 C&deg - 10 C&deg)</b><br />
+                    <input name='temp-correction' type='number' min='-10' max='10' placeholder='Wert in C&deg'
+                        value='%d' required>
+                </p><br />
+            </fieldset><br />
+
+            <button name='save' type='submit' class='button bgrn'>Speichern</button><br />
+
+        </form>
+        <br />
+        <form action="/rst">
+            <button name='reset' class='button btnr'>Zurücksetzen</button>
+        </form>
     </div>
 </body>
 
