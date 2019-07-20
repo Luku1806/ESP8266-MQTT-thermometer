@@ -58,6 +58,9 @@ void Config::printConfig() {
 
     Serial.print("TEMP-CORRECTION: ");
     Serial.println(getTempCorrection());
+
+    Serial.print("MESSAGE-DELAY: ");
+    Serial.println(getMessageDelay());
 }
 
 bool Config::flashInitialized() {
@@ -72,6 +75,7 @@ bool Config::isValid() {
            (config_struct.mqtt_user != NULL && strlen(config_struct.mqtt_user) > 0) &&
            (config_struct.mqtt_passwd != NULL && strlen(config_struct.mqtt_passwd) > 0) &&
            (config_struct.mqtt_topic != NULL && strlen(config_struct.mqtt_topic) > 0) &&
+           config_struct.temp_correct != NAN && config_struct.messageDelay != NAN &&
            flashInitialized();
 }
 
@@ -93,6 +97,8 @@ char *Config::getMqttPassword() { return config_struct.mqtt_passwd; }
 char *Config::getMqttTopic() { return config_struct.mqtt_topic; }
 
 int8 Config::getTempCorrection() { return config_struct.temp_correct; }
+
+uint16 Config::getMessageDelay() { return config_struct.messageDelay; };
 
 int Config::getMagicNumber() { return config_struct.magicNumber; }
 
@@ -139,6 +145,11 @@ bool Config::setMqttTopic(char topic[]) {
 
 bool Config::setTempCorrection(int8 value) {
     config_struct.temp_correct = value;
+    return true;
+}
+
+bool Config::setMessageDelay(uint16 delay) {
+    config_struct.messageDelay = delay;
     return true;
 }
 

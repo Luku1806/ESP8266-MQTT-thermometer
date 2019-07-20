@@ -13,13 +13,14 @@ class Config {
         char wifi_passwd[32];   // Password of WiFi
         char wifi_hostname[32]; // Password of WiFi
 
-        char mqtt_ip[16];         // Ip address or hostname of MQTT broker
-        unsigned short mqtt_port; // Port of MQTT broker
-        char mqtt_user[32];       // Username for MQTT broker
-        char mqtt_passwd[32];     // Password for MQTT broker
-        char mqtt_topic[255];     // MQTT publish topic
+        char mqtt_ip[16];                // Ip address or hostname of MQTT broker
+        unsigned short mqtt_port = 1833; // Port of MQTT broker
+        char mqtt_user[32];              // Username for MQTT broker
+        char mqtt_passwd[32];            // Password for MQTT broker
+        char mqtt_topic[255];            // MQTT publish topic
 
-        int8 temp_correct; // Value for temperature correction
+        int8 temp_correct;        // Value for temperature correction
+        uint16 messageDelay = 10; // The time to wait between to mqtt publishes
     } cfg;
 
   private:
@@ -47,6 +48,7 @@ class Config {
     char *getMqttTopic();
 
     int8 getTempCorrection();
+    uint16 getMessageDelay();
 
     int getMagicNumber();
 
@@ -62,6 +64,7 @@ class Config {
     bool setMqttTopic(char topic[]);
 
     bool setTempCorrection(int8 value);
+    bool setMessageDelay(uint16 delay);
 
     bool setMagicNumber(int val);
 };

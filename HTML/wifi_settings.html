@@ -182,14 +182,21 @@
                     <b>Temperaturanpassung in C&deg (-10 C&deg - 10 C&deg)</b><br />
                     <input name='temp-correction' type='number' min='-10' max='10' placeholder='Wert in C&deg'
                         value='%d' required>
+                </p>
+
+                <p>
+                    <b>MQTT Nachrichten Häufigkeit in Sekunden (max. 65536 Sekunden)</b><br />
+                    <input name='mqtt-delay' type='number' min='1' max='65536' placeholder='Wert in Sekunden' value='%u'
+                        required>
                 </p><br />
+
             </fieldset><br />
 
             <button name='save' type='submit' class='button bgrn'>Speichern</button><br />
 
         </form>
         <br />
-        <form action="/rst">
+        <form action='/rst'>
             <button name='reset' class='button btnr'>Zurücksetzen</button>
         </form>
     </div>
